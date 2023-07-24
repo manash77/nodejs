@@ -36,4 +36,26 @@ exports.postDeleteExpense = (req,res,next) =>{
     })
     .catch(err => console.error(err))
 }
-exports.postEditExpense = (req,res,next) =>{}
+exports.getEditExpense = (req,res,next) =>{
+    const id = req.params.id;
+    Expense.findByPk(id)
+    .then(expense =>{
+      return res.json(expense)
+    })
+    .catch(err => console.error(err))
+}
+
+exports.postEditExpense = (req,res,next) =>{
+    const updatedAmount = req.body.amount;
+    const updatedDesc = req.body.description;
+    const updatedCategory = req.body.category;
+    Expense.findByPk(req.body.id)
+    .then(expense =>{
+      expense.amount = updatedAmount;
+      expense.category = updatedCategory;
+      expense.description = updatedDesc;
+      expense.save();
+      return res.json()
+    })
+    .catch(err => console.error(err))
+}
