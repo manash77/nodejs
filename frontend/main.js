@@ -1,4 +1,4 @@
-const form = document.getElementById('myForm');
+const form = document.getElementById('Expense');
 const list = document.getElementById('list');
 
 function onSubmit(e) {
@@ -19,10 +19,22 @@ function onSubmit(e) {
 
 async function addExpense(expense) {
     try {
-        const response = axios.post('http://localhost:8000/expense/add-expense',expense)
+        const response = await axios.post('http://localhost:8000/expense/add-expense',expense)
         console.log("add-expense",response);
         if (response.status === 200) {
-            await getAllExpense();
+            getAllExpense();
+          }
+    } catch (error) {
+        console.error("Error While Saving Data", error);
+    }
+}
+
+async function deleteExpense(id) {
+    try {
+        const response = await axios.post('http://localhost:8000/expense/delete-expense',{id:id})
+        console.log("delete-expense",response);
+        if (response.status === 200) {
+            getAllExpense();
           }
     } catch (error) {
         console.error("Error While Saving Data", error);
@@ -50,8 +62,8 @@ function renderData(expenses) {
         Element.classList = 'list-group-item'
         deleteButton.classList = 'btn btn-danger';
         editButton.classList = 'btn btn-secondary mx-4';
-        deleteButton.addEventListener("click", () => deleteExpense(expense.id));
         editButton.addEventListener("click", () => editExpense(expense.id));
+        deleteButton.addEventListener("click", () => deleteExpense(expense.id));
         Element.appendChild(editButton);
         Element.appendChild(deleteButton);
         list.appendChild(Element);

@@ -17,11 +17,23 @@ exports.postAddExpense = (req,res,next) =>{
         description:description,
         category:category
     })
-    .then(response =>{
+    .then(() =>{
         console.log("Expense added");
         return res.json()
       }) 
       .catch(err => console.error(err))
 }
-exports.postDeleteExpense = (req,res,next) =>{}
+exports.postDeleteExpense = (req,res,next) =>{
+    const id = req.body.id;
+    Expense.findByPk(id)
+    .then(expnse =>{
+      console.log(expnse);
+      expnse.destroy();
+      return res.json()
+    })
+    .then( ()=> {
+      console.log('Expense user')
+    })
+    .catch(err => console.error(err))
+}
 exports.postEditExpense = (req,res,next) =>{}
