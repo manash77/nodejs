@@ -18,13 +18,13 @@ function onSubmit(e) {
     table
   }
   saveData(obj)
-  // form.reset();
+  form.reset();
 }
 
 //Saves Data From The Endpoint
 async function saveData(order) {
   try {
-    const response = await axios.post('http://localhost:8000/orders/add-order', order);
+    const response = await axios.post('http://localhost:8000/orders', order);
     if (response.status === 200) {
       await reloadAll();
     }
@@ -36,10 +36,9 @@ async function saveData(order) {
 //Delete Data From The Endpoint
 async function deleteData(id) {
   try {
-    const response = await axios.post('http://localhost:8000/orders/delete-order',{id:id});
+    const response = await axios.delete(`http://localhost:8000/orders/${id}`);
     await reloadAll();
     console.log("Deleted Data Successfully !!", response);
-
   } catch (error) {
     console.error("Error While Deleting Data", error);
 
@@ -49,7 +48,7 @@ async function deleteData(id) {
 //Get All Data from DB and Reload All Data On Screen 
 async function reloadAll() {
   try {
-    const response = await axios.get('http://localhost:8000/orders/get-orders');
+    const response = await axios.get('http://localhost:8000/orders');
     diplayData(response.data)
   } catch (error) {
     console.error("Error While Reloading Data", error);

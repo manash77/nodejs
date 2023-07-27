@@ -9,7 +9,7 @@ app.use(cors());
 
 const ordersRoutes = require('./routes/order')
 app.use(bodyParser.json({ extended: false }))
-app.use('/orders', ordersRoutes);
+app.use(ordersRoutes);
 
 sequelize
     .sync()

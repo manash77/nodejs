@@ -1,4 +1,4 @@
-const Order = require('../models/Order')
+const Order = require('../models/order')
 
 exports.getAllOrders = (req,res,next)=>{
     console.log("called"); 
@@ -29,11 +29,10 @@ exports.postAddOrder = (req,res,next)=>{
 }
 
 exports.postDeleteOrder = (req,res,next)=>{
-    const id = req.body.id;
+    const id = req.params.id;
     console.log(id);
     Order.findByPk(id)
     .then(order =>{
-      console.log(order);
       order.destroy();
       return res.json()
     })
