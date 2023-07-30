@@ -27,6 +27,7 @@ async function login(order) {
         console.log(response);
         if (response.status === 200) {
             alert(response.data.success)
+            window.location.href = "http://localhost:5500/Client/expense"; 
         }
         if (response.status !== 200) {
             alert(response.data.err)
