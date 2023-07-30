@@ -30,7 +30,7 @@ function signupSubmit(e) {
 //Saves Data From The Endpoint
 async function signUp(order) {
   try {
-    const response = await axios.post('http://localhost:8000/users/signup', order);
+    const response = await axios.post('http://localhost:8000/users/signup', order,{validateStatus: () => true});
     console.log(response);
     if (response.data.userExists) {
       alert('User Already Exits');
@@ -39,7 +39,7 @@ async function signUp(order) {
     if (response.status === 201) {
       alert('data Added')
     }
-  } catch (error) {
+  } catch (error) {  
     console.error("Error While Saving Data", error);
   }
 }
