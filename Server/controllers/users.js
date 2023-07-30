@@ -38,11 +38,16 @@ exports.loginUser = async (req, res, next) => {
     if (!user) {
         return res.status(404).json({ err: "User Not Found" })
     }
-    if (user.password !== password) {
-        return res.status(401).json({ err: "Password is incorrect!!" })
-    }
-    else{
-        return res.status(200).json({ success: "User Logged In Successfully!!" })
-    }
-
+    bcrypt.compare(password, user.password, (error, result) => {
+        if(result){
+            return res.status(200).json({ success: "User Logged In Successfully!!" })
+        }
+        else if(error){
+            return res.status(500).json({err:"hash error"})
+        }
+        else{
+            return res.status(401).json({ err: "Password is incorrect!!" })
+        }
+        
+    });
 }
