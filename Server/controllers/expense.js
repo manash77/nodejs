@@ -28,7 +28,6 @@ exports.postDeleteExpense = (req,res,next) =>{
     const id = req.params.id;
     Expense.findByPk(id)
     .then(expnse =>{
-      console.log(expnse);
       expnse.destroy();
       return res.json()
     })

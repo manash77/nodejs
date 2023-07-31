@@ -30,7 +30,7 @@ exports.createUser = async (req, res, next) => {
 }
 
 function generateToken(id,name) {
-    return jwt.sign({userId:id,username:name},'secretKey101')
+    return jwt.sign({userId:id,username:name},process.env.SECRET_KEY)
 }
 exports.loginUser = async (req, res, next) => {
     const { email, password } = req.body;

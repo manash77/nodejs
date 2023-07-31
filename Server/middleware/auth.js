@@ -5,7 +5,7 @@ const Users = require('../models/users');
 const authenticate = async(req, res, next) => {
     try {
         const token = req.header('Authorization'); 
-        const {userId} = jwt.verify(token,'secretKey101');
+        const {userId} = jwt.verify(token,process.env.SECRET_KEY);
         const user = await Users.findByPk(userId);
         if (user) {
             req.user = user;

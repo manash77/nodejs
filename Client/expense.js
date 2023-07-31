@@ -33,8 +33,8 @@ async function addExpense(expense) {
         } else {
             await axios.post('http://localhost:8000/expense/add-expense', expense, { headers: { 'Authorization': token } })
             alert("Data added successfully !!");
-        }+
-        await getAllExpense()
+        } +
+            await getAllExpense()
     } catch (error) {
         console.error("Error While Saving Data", error);
     }
@@ -98,6 +98,31 @@ function renderData(expenses) {
     });
 }
 
+document.getElementById('razorButton').onclick = async (e) => {
+    const token = localStorage.getItem('token');
+    const response = await axios.get("http://localhost:8000/purchase/premium", { headers: { 'Authorization': token } });
+    console.log(response);
+
+    var options =
+    {
+        "key": response.data.key_id,
+        "order_id":response.data.order.id, 
+        "handler": async function (response) {
+            await axios.post("http://localhost:8000/purchase/updatestatus", {
+                order_id: options.order_id,
+                payment_id: response.razorpay_payment_id
+            }, { headers: { 'Authorization': token } })
+
+            alert("You are Premium User now")
+        },
+    };
+    const rzp1 = new Razorpay(options)
+    rzp1.open();
+    e.preventDefault();
+    rzp1.on('payment.failed', (response) => {
+        console.log(response);
+    })
+}
 window.addEventListener('DOMContentLoaded', async () => {
     try {
         await getAllExpense()
