@@ -24,10 +24,10 @@ function loginSubmit(e) {
 async function login(order) {
     try {
         const response = await axios.post('http://localhost:8000/users/login', order,{validateStatus: () => true});
-        console.log(response);
-        if (response.status === 200) {
+        localStorage.setItem('token',response.data.token)
+        if (response.data.success) {
             alert(response.data.success)
-            window.location.href = "http://localhost:5500/Client/expense"; 
+            window.location.href = "http://localhost:5500/Client/expense.html"; 
         }
         if (response.status !== 200) {
             alert(response.data.err)

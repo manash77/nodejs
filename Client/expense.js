@@ -13,7 +13,7 @@ function onSubmit(e) {
         description,
         category
     }
-    if(id){
+    if (id) {
         obj['id'] = id;
     }
     addExpense(obj)
@@ -22,17 +22,18 @@ function onSubmit(e) {
 
 
 async function addExpense(expense) {
-    try { 
+    try {
+        const token = localStorage.getItem('token');
         document.getElementById('add-edit-button').innerHTML = 'Add';
-        
-        if(document.getElementById('expenseId').value){
-            await axios.post('http://localhost:8000/expense/edit-expense',expense)
+
+        if (document.getElementById('expenseId').value) {
+            await axios.patch('http://localhost:8000/expense/edit-expense', expense, { headers: { 'Authorization': token } })
             alert("Data updated successfully !!");
             document.getElementById('add-edit-button').innerHTML = 'Add';
-        }else{
-            await axios.post('http://localhost:8000/expense/add-expense',expense)
+        } else {
+            await axios.post('http://localhost:8000/expense/add-expense', expense, { headers: { 'Authorization': token } })
             alert("Data added successfully !!");
-        }
+        }+
         await getAllExpense()
     } catch (error) {
         console.error("Error While Saving Data", error);
@@ -41,12 +42,12 @@ async function addExpense(expense) {
 
 async function deleteExpense(id) {
     try {
-        const response = await axios.delete(`http://localhost:8000/expense/delete-expense/${id}`)
-        console.log("delete-expense",response);
+        const token = localStorage.getItem('token');
+        const response = await axios.delete(`http://localhost:8000/expense/delete-expense/${id}`, { headers: { 'Authorization': token } })
         if (response.status === 200) {
             getAllExpense();
             alert("Data deleted successfully !!");
-          }
+        }
     } catch (error) {
         console.error("Error While Saving Data", error);
     }
@@ -61,19 +62,20 @@ async function editExpense(id) {
         document.getElementById('description').value = response.data.description;
         document.getElementById('category').value = response.data.category;
         document.getElementById('add-edit-button').innerHTML = 'Update';
-        
+
     } catch (error) {
         console.error("Error While Editing Data", error);
     }
 }
 
-async function getAllExpense(){
-     try {
-        const response = await axios.get('http://localhost:8000/expense/get-expense');
+async function getAllExpense() {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get('http://localhost:8000/expense/get-expense', { headers: { 'Authorization': token } });
         renderData(response.data);
     } catch (error) {
         console.error(error);
-    } 
+    }
 }
 
 function renderData(expenses) {
@@ -96,7 +98,7 @@ function renderData(expenses) {
     });
 }
 
-window.addEventListener('DOMContentLoaded', async() =>{
+window.addEventListener('DOMContentLoaded', async () => {
     try {
         await getAllExpense()
     } catch (error) {

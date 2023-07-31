@@ -37,7 +37,8 @@ async function signUp(order) {
       form.className -= "was-validated";
     }
     if (response.status === 201) {
-      alert('data Added')
+      alert('User Added Successfully!!')
+      window.location.href = "http://localhost:5500/Client/login.html"; 
     }
   } catch (error) {  
     console.error("Error While Saving Data", error);
