@@ -10,6 +10,8 @@ exports.getAllExpense = (req,res,next) =>{
 exports.postAddExpense = (req,res,next) =>{
     const {amount,description,category} = req.body;
     const userId = req.user.id;
+    let totalExpense = req.user.totalExpense;
+    totalExpense+=amount;
     
     Expense.create({
         amount,
@@ -17,7 +19,8 @@ exports.postAddExpense = (req,res,next) =>{
         category,
         userId
     })
-    .then(() =>{
+    .then(async () =>{
+        await req.user.update({totalExpense})
         return res.json()
       }) 
       .catch(err => console.error(err))

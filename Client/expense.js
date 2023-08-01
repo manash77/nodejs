@@ -88,7 +88,7 @@ async function deleteExpense(id) {
 
 async function editExpense(id) {
     try {
-        const response = await axios.get(`http://localhost:8000/expense/edit-expense/${id}`)
+        const response = await axios.get(`http://localhost:8000/expense/edit-expense/${id}`,{ headers: { 'Authorization': token } })
         console.log(response);
         document.getElementById('expenseId').value = response.data.id;
         document.getElementById('amount').value = response.data.amount;

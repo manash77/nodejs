@@ -10,6 +10,7 @@ const purchasePremium = (req, res) => {
             key_secret: process.env.RAZORPAY_SECRET_KEY
         })
 
+        console.log("rzp",rzp);
         const amount = 5000;
         rzp.orders.create({ amount, currency: "INR" }, (err, order) => {
             if (err) {
