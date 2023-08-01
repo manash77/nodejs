@@ -18,7 +18,6 @@ exports.postAddExpense = (req,res,next) =>{
         userId
     })
     .then(() =>{
-        console.log("Expense added");
         return res.json()
       }) 
       .catch(err => console.error(err))

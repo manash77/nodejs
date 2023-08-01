@@ -10,7 +10,7 @@ exports.createUser = async (req, res, next) => {
         return res.status(400).json({ err: "Bad parameters Something is missing" });
     }
 
-    bcrypt.hash(password, saltRounds, async (err, password)=> {
+    bcrypt.hash(password, saltRounds, async (err, password) => {
         console.error(err);
         const [user, created] = await Users.findOrCreate({
             where: { email: email },
@@ -26,11 +26,11 @@ exports.createUser = async (req, res, next) => {
             return res.json({ userExists: true })
         }
     });
-    
+
 }
 
-function generateToken(id,name) {
-    return jwt.sign({userId:id,username:name},process.env.SECRET_KEY)
+exports.generateToken = (id, name,ispremiumuser) => {
+    return jwt.sign({ userId: id, username: name, ispremiumuser }, process.env.SECRET_KEY)
 }
 exports.loginUser = async (req, res, next) => {
     const { email, password } = req.body;
@@ -43,15 +43,15 @@ exports.loginUser = async (req, res, next) => {
         return res.status(404).json({ err: "User Not Found" })
     }
     bcrypt.compare(password, user.password, (error, result) => {
-        if(result){
-            return res.status(200).json({token:generateToken(user.id,user.name), success: "User Logged In Successfully!!" })
+        if (result) {
+            return res.status(200).json({ token: generateToken(user.id, user.name, user.ispremiumuser), success: "User Logged In Successfully!!" })
         }
-        else if(error){
-            return res.status(500).json({err:"hash error"})
+        else if (error) {
+            return res.status(500).json({ err: "hash error" })
         }
-        else{
+        else {
             return res.status(401).json({ err: "Password is incorrect!!" })
         }
-        
+
     });
 }

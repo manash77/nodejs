@@ -98,6 +98,16 @@ function renderData(expenses) {
     });
 }
 
+function parseJwt (token) {
+    var base64Url = token.split('.')[1];
+    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+
+    return JSON.parse(jsonPayload);
+}
+
 document.getElementById('razorButton').onclick = async (e) => {
     const token = localStorage.getItem('token');
     const response = await axios.get("http://localhost:8000/purchase/premium", { headers: { 'Authorization': token } });
@@ -108,25 +118,45 @@ document.getElementById('razorButton').onclick = async (e) => {
         "key": response.data.key_id,
         "order_id":response.data.order.id, 
         "handler": async function (response) {
-            await axios.post("http://localhost:8000/purchase/updatestatus", {
+           const res = await axios.post("http://localhost:8000/purchase/updatestatus", {
                 order_id: options.order_id,
-                payment_id: response.razorpay_payment_id
+                payment_id: response.razorpay_payment_id,
+                status:"SUCCESSFUL",
             }, { headers: { 'Authorization': token } })
 
+            localStorage.setItem('token',res.data.token)
             alert("You are Premium User now")
+            showPremiumUser();
+
         },
     };
     const rzp1 = new Razorpay(options)
     rzp1.open();
     e.preventDefault();
-    rzp1.on('payment.failed', (response) => {
+    rzp1.on('payment.failed', async (response) => {
         console.log(response);
+        await axios.post("http://localhost:8000/purchase/updatestatus", {
+                order_id: options.order_id,
+                payment_id: response.razorpay_payment_id,
+                status:"FAILED",
+            }, { headers: { 'Authorization': token } })
     })
 }
 window.addEventListener('DOMContentLoaded', async () => {
     try {
+        showPremiumUser();
         await getAllExpense()
     } catch (error) {
-        console.error(error);
+        console.error(JSON.stringify(error));
     }
 })
+
+function showPremiumUser() {
+    const token = localStorage.getItem('token');
+    const { ispremiumuser } = parseJwt(token);
+    console.log(ispremiumuser);
+    if (ispremiumuser) {
+        document.getElementById('razorButton').style.visibility = 'hidden';
+        document.getElementById('message').innerHTML = 'Premium User';
+    }
+}
