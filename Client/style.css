@@ -8,6 +8,9 @@ body{
     background-color: #6CC4BF;
 }
 
+#showDashboard{
+    display: none;
+}
 .myform{
     position: relative;
     display: -ms-flexbox;

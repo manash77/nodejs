@@ -32,6 +32,7 @@ exports.createUser = async (req, res, next) => {
 exports.generateToken = (id, name,ispremiumuser) => {
     return jwt.sign({ userId: id, username: name, ispremiumuser }, process.env.SECRET_KEY)
 }
+
 exports.loginUser = async (req, res, next) => {
     const { email, password } = req.body;
     if (password == '' || email == '') {
@@ -44,7 +45,7 @@ exports.loginUser = async (req, res, next) => {
     }
     bcrypt.compare(password, user.password, (error, result) => {
         if (result) {
-            return res.status(200).json({ token: generateToken(user.id, user.name, user.ispremiumuser), success: "User Logged In Successfully!!" })
+            return res.status(200).json({ token: this.generateToken(user.id, user.name, user.ispremiumuser), success: "User Logged In Successfully!!" })
         }
         else if (error) {
             return res.status(500).json({ err: "hash error" })

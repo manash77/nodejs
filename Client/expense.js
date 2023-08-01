@@ -1,5 +1,38 @@
 const form = document.getElementById('Expense');
 const list = document.getElementById('list');
+const leaderboard = document.getElementById('leaderboard');
+
+document.getElementById('showLeaderboard').onclick = async(e) =>{
+    try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get('http://localhost:8000/premium/showleaderboard', { headers: { 'Authorization': token } })
+        renderLeaderboardData(response.data)
+
+        
+    } catch (error) {
+        console.error("Error While Loading  leaderboard Data", error);
+    }
+}
+
+function renderLeaderboardData(leaderboardData) {
+    let divElement = document.createElement('div');
+    let h1Element = document.createElement('h1');
+    divElement.classList.add('myform')
+    
+    divElement.appendChild(h1Element)
+
+    leaderboardData.forEach( userData =>{
+        let Element = document.createElement('li');
+        h1Element.textContent = 'LeaderBoard';
+        Element.innerHTML = "Name: "+userData.name + "  --  "+ " Amount: " + userData.totalcost ;
+        Element.classList = 'list-group-item';
+        leaderboard.classList.add("col-8")
+        leaderboard.appendChild(Element);
+        leaderboard.parentElement.appendChild(divElement)
+    })
+    divElement.appendChild(leaderboard);
+
+}
 
 function onSubmit(e) {
     e.preventDefault();
@@ -156,7 +189,8 @@ function showPremiumUser() {
     const { ispremiumuser } = parseJwt(token);
     console.log(ispremiumuser);
     if (ispremiumuser) {
-        document.getElementById('razorButton').style.visibility = 'hidden';
+        document.getElementById('razorButton').style.display = 'none';
         document.getElementById('message').innerHTML = 'Premium User';
+        document.getElementById('showLeaderboard').style.display = 'block';
     }
 }

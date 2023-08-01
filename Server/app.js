@@ -21,10 +21,12 @@ Order.belongsTo(Users);
 const usersRoutes = require('./routes/users');
 const expenseRoutes = require('./routes/expense');
 const purchaseRoutes = require('./routes/purchase');
+const premiumRoutes = require('./routes/premium');
 app.use(bodyParser.json({ extended: false }))
 app.use('/users',usersRoutes);
 app.use('/expense',expenseRoutes);
 app.use('/purchase',purchaseRoutes);
+app.use('/premium',premiumRoutes);
 
 
 
