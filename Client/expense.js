@@ -24,7 +24,7 @@ function renderLeaderboardData(leaderboardData) {
     leaderboardData.forEach( userData =>{
         let Element = document.createElement('li');
         h1Element.textContent = 'LeaderBoard';
-        Element.innerHTML = "Name: "+userData.name + "  --  "+ " Amount: " + userData.totalcost ;
+        Element.innerHTML = "Name: "+userData.name + "  --  "+ " Amount: " + userData.totalExpense ;
         Element.classList = 'list-group-item';
         leaderboard.classList.add("col-8")
         leaderboard.appendChild(Element);
@@ -60,12 +60,16 @@ async function addExpense(expense) {
         document.getElementById('add-edit-button').innerHTML = 'Add';
 
         if (document.getElementById('expenseId').value) {
-            await axios.patch('http://localhost:8000/expense/edit-expense', expense, { headers: { 'Authorization': token } })
+            await axios.patch('http://localhost:8000/expense/edit-expense', expense,{validateStatus: () => true}, { headers: { 'Authorization': token } })
             alert("Data updated successfully !!");
             document.getElementById('add-edit-button').innerHTML = 'Add';
         } else {
-            await axios.post('http://localhost:8000/expense/add-expense', expense, { headers: { 'Authorization': token } })
-            alert("Data added successfully !!");
+            const response = await axios.post('http://localhost:8000/expense/add-expense', expense,{ headers: { 'Authorization': token } })
+            if (response.status === 201) {
+                alert("Data added successfully !!");
+            }else{
+                alert(response.data.err);
+            }
         } +
             await getAllExpense()
     } catch (error) {
@@ -76,7 +80,7 @@ async function addExpense(expense) {
 async function deleteExpense(id) {
     try {
         const token = localStorage.getItem('token');
-        const response = await axios.delete(`http://localhost:8000/expense/delete-expense/${id}`, { headers: { 'Authorization': token } })
+        const response = await axios.delete(`http://localhost:8000/expense/delete-expense/${id}`,{ headers: { 'Authorization': token } })
         if (response.status === 200) {
             getAllExpense();
             alert("Data deleted successfully !!");

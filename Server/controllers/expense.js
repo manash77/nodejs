@@ -1,55 +1,90 @@
 const Expense = require('../models/expense');
+const Users = require('../models/users');
+const userContorller = require('./users');
+const sequelize = require('../util/database');
 
-exports.getAllExpense = (req,res,next) =>{
-    Expense.findAll({where:{userId:req.user.id}})
+exports.getAllExpense = (req, res, next) => {
+  Expense.findAll({ where: { userId: req.user.id } })
     .then(expenses => {
-        return res.json(expenses)
-    })
-    .catch(err =>console.error(err))
-}
-exports.postAddExpense = (req,res,next) =>{
-    const {amount,description,category} = req.body;
-    const userId = req.user.id;
-    let totalExpense = req.user.totalExpense;
-    totalExpense+=amount;
-    
-    Expense.create({
-        amount,
-        description,
-        category,
-        userId
-    })
-    .then(async () =>{
-        await req.user.update({totalExpense})
-        return res.json()
-      }) 
-      .catch(err => console.error(err))
-}
-
-exports.postDeleteExpense = (req,res,next) =>{
-    const id = req.params.id;
-    Expense.findByPk(id)
-    .then(expnse =>{
-      expnse.destroy();
-      return res.json()
+      return res.json(expenses)
     })
     .catch(err => console.error(err))
 }
-exports.getEditExpense = (req,res,next) =>{
+exports.postAddExpense = async (req, res, next) => {
+  const t = await sequelize.transaction();
+  const { amount, description, category } = req.body;
+  const userId = req.user.id;
+
+  await Expense.create({
+    amount,
+    description,
+    category,
+    userId,
+    transaction: t
+  }, { transaction: t })
+    .then(async () => {
+      let totalExpense = Number(req.user.totalExpense) + Number(amount);
+      Users.update({ totalExpense }, { where: { id: req.user.id }, transaction: t }).then(async () => {
+        await t.commit()
+        return res.status(201).json()
+      }).catch(async (err) => {
+        console.error(err)
+        await t.rollback()
+        return res.status(200).json({ err })
+
+      });
+    })
+    .catch(async (err) => {
+      console.error(err)
+      await t.rollback()
+    })
+}
+
+exports.postDeleteExpense = async (req, res, next) => {
+  try {
+    const t = await sequelize.transaction();
+    const userId = req.user.id;
     const id = req.params.id;
-    Expense.findByPk(id)
-    .then(expense =>{
+
+    const expense = await Expense.findByPk(id)
+    if (expense) {
+      const totalExpense = Number(req.user.totalExpense) - Number(expense.amount);
+      const promise1 = await req.user.update({ totalExpense },{transaction:t})
+      const promise2 = await expense.destroy({transaction:t});
+
+      Promise.all([promise1, promise2]).then(() => {
+        t.commit()
+        res.status(200).json({ success: true, message: "Expenese deleted successfully!!", token: userContorller.generateToken(userId, undefined, true) })
+      }).catch((err) => {
+        t.rollback();
+        throw new Error(err)
+      });
+    } else {
+      t.rollback();
+      throw new Error("User Expense was not found");
+    }
+
+  } catch (error) {
+    console.error(error);
+  }
+
+
+}
+exports.getEditExpense = (req, res, next) => {
+  const id = req.params.id;
+  Expense.findByPk(id)
+    .then(expense => {
       return res.json(expense)
     })
     .catch(err => console.error(err))
 }
 
-exports.postEditExpense = (req,res,next) =>{
-    const updatedAmount = req.body.amount;
-    const updatedDesc = req.body.description;
-    const updatedCategory = req.body.category;
-    Expense.findByPk(req.body.id)
-    .then(expense =>{
+exports.postEditExpense = (req, res, next) => {
+  const updatedAmount = req.body.amount;
+  const updatedDesc = req.body.description;
+  const updatedCategory = req.body.category;
+  Expense.findByPk(req.body.id)
+    .then(expense => {
       expense.amount = updatedAmount;
       expense.category = updatedCategory;
       expense.description = updatedDesc;
