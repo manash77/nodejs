@@ -196,5 +196,6 @@ function showPremiumUser() {
         document.getElementById('razorButton').style.display = 'none';
         document.getElementById('message').innerHTML = 'Premium User';
         document.getElementById('showLeaderboard').style.display = 'block';
+        document.getElementById('downloadLeaderboard').style.display = 'block';
     }
 }

@@ -1,5 +1,35 @@
 const loginForm = document.getElementById('loginForm');
+const myModal = document.getElementById('myModal')
+const forgotEmailInput = document.getElementById('forgotEmail')
+const submitModalButton = document.getElementById('submitModal')
+
+submitModalButton.addEventListener("click", async(e)=>{
+    if (forgotEmailInput.value === '') {
+        alert("Please Add Registered Email")
+        return;
+    }
+    if (!forgotEmailInput.value.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g)){
+        alert("Insert Valid Email")
+        return;
+    }
+    const response = await axios.post("http://localhost:8000/password/forgotpassword",{email:forgotEmailInput.value},{validateStatus: () => true});
+    console.log(response);
+    if(response.status === 200){
+        alert(response.data.message)
+        forgotEmailInput.value ='';
+        myModal.classList.add("hide");
+    }else{
+        alert(response.data.message)
+    }
+
+})
+
 loginForm.addEventListener('submit', loginSubmit);
+
+myModal.addEventListener('shown.bs.modal', () => {
+    forgotEmailInput.focus()
+})
+
 
 
 function loginSubmit(e) {
