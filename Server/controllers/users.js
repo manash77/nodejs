@@ -1,3 +1,5 @@
+const UserServices = require('../Services/userservices')
+const S3Services = require('../Services/s3services')
 const Users = require('../models/users');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
@@ -29,7 +31,7 @@ exports.createUser = async (req, res, next) => {
 
 }
 
-exports.generateToken = (id, name,ispremiumuser) => {
+exports.generateToken = (id, name, ispremiumuser) => {
     return jwt.sign({ userId: id, username: name, ispremiumuser }, process.env.SECRET_KEY)
 }
 
@@ -56,3 +58,18 @@ exports.loginUser = async (req, res, next) => {
 
     });
 }
+
+exports.downloadExpense = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const expenses = await UserServices.getExpenses(req);
+        const stringifiedExpense = JSON.stringify(expenses)
+        const filename = `Expense-${userId}-${new Date()}.txt`;
+        const fileUrl = await S3Services.uploadToS3(stringifiedExpense, filename)
+        res.status(200).json({ fileUrl, success: true })
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ fileUrl: '', success: false, err })
+    }
+}
+

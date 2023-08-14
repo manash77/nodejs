@@ -2,6 +2,25 @@ const form = document.getElementById('Expense');
 const list = document.getElementById('list');
 const leaderboard = document.getElementById('leaderboard');
 
+document.getElementById('downloadLeaderboard').onclick = async(e)=>{
+    try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get('http://localhost:8000/users/download', { headers: { 'Authorization': token } })
+        if (response.status === 200) {
+            var a = document.createElement("a");
+            a.href = response.data.fileUrl;
+            a.download = 'my-expense.csv'
+            a.click()
+        }
+        else{
+            throw new Error(response.data.message)
+        }
+
+    } catch (error) {
+        console.error("Error While Downloading Expense",error);
+    }
+}
+
 document.getElementById('showLeaderboard').onclick = async(e) =>{
     try {
         const token = localStorage.getItem('token');
@@ -60,7 +79,7 @@ async function addExpense(expense) {
         document.getElementById('add-edit-button').innerHTML = 'Add';
 
         if (document.getElementById('expenseId').value) {
-            await axios.patch('http://localhost:8000/expense/edit-expense', expense,{validateStatus: () => true}, { headers: { 'Authorization': token } })
+            await axios.patch('http://localhost:8000/expense/edit-expense', expense, { headers: { 'Authorization': token } },{validateStatus: () => true})
             alert("Data updated successfully !!");
             document.getElementById('add-edit-button').innerHTML = 'Add';
         } else {
@@ -92,6 +111,7 @@ async function deleteExpense(id) {
 
 async function editExpense(id) {
     try {
+        const token = localStorage.getItem('token');
         const response = await axios.get(`http://localhost:8000/expense/edit-expense/${id}`,{ headers: { 'Authorization': token } })
         console.log(response);
         document.getElementById('expenseId').value = response.data.id;
