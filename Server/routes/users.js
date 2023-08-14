@@ -8,5 +8,6 @@ const usersController = require('../controllers/users');
 router.post('/signup',usersController.createUser)
 router.post('/login',usersController.loginUser)
 router.get('/download', auth.authenticate,usersController.downloadExpense)
+router.get('/get-files', auth.authenticate,usersController.getFiles)
 
 module.exports = router;

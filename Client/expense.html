@@ -12,14 +12,17 @@
 </head>
 
 <body>
-    <div id="message"></div>
-    <div class="container mt-5">
-        <button id="razorButton" class="btn btn-dark float-end">Buy Premium</button>
-        <div class="row d-flex justify-content-center">
-            <ul id="leaderboard" class="list-group"></ul>
-        </div>
+    <div><marquee behavior="slide" direction="right" id="message" class="fs-5 text"></marquee></div>
 
-        <div class="row d-flex justify-content-center">
+    <div class="container-fluid">
+        <div class="row">
+          <div class="col-4">
+              <ul id="userfiles" class="list-group"></ul>
+              <ul id="leaderboard" class="list-group"></ul>
+            <div class="row d-flex justify-content-center">
+            </div>
+          </div>
+          <div class="col-6">
             <div class="myform needs-validation">
                 <div class="col-sm-10 col-md-11 col-lg-11 col-10">
                     <div class="logo mb-3">
@@ -50,10 +53,13 @@
                                         </select>
                                     </div>
 
-                                    <div class="row justify-content-center mt-3 mb-3 " > 
-                                        <button id="add-edit-button" class="btn btn-secondary col-3" type="submit">Add</button>
-                                        <button id="showLeaderboard" class="btn btn-secondary col-3 mx-2" type="button">Dashboard</button>
-                                        <button id="downloadLeaderboard" class="btn btn-secondary col-3 mx-2" type="button">Download</button>
+                                    <div class="row justify-content-center mt-3 mb-3 ">
+                                        <button id="add-edit-button" class="btn btn-secondary col-3"
+                                            type="submit">Add</button>
+                                        <button id="showLeaderboard" class="btn btn-secondary col-3 mx-2"
+                                            type="button">Dashboard</button>
+                                        <button id="downloadLeaderboard" class="btn btn-secondary col-3 mx-2"
+                                            type="button">Download</button>
                                     </div>
                                 </form>
                             </div>
@@ -66,10 +72,18 @@
                     </div>
                 </div>
             </div>
+          </div>
         </div>
-        
+      </div>
+    <div class="container mt-5">
+        <div class="row d-flex justify-content-center">
+            <div class="col">
+                <button id="razorButton" class="btn btn-dark float-end">Buy Premium</button>
+            </div>
+        </div>
+
     </div>
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
         integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
         crossorigin="anonymous"></script>

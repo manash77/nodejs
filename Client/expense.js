@@ -1,16 +1,14 @@
 const form = document.getElementById('Expense');
 const list = document.getElementById('list');
 const leaderboard = document.getElementById('leaderboard');
+const UserFiles = document.getElementById('userfiles');
 
 document.getElementById('downloadLeaderboard').onclick = async(e)=>{
     try {
         const token = localStorage.getItem('token');
         const response = await axios.get('http://localhost:8000/users/download', { headers: { 'Authorization': token } })
         if (response.status === 200) {
-            var a = document.createElement("a");
-            a.href = response.data.fileUrl;
-            a.download = 'my-expense.csv'
-            a.click()
+            downloadFile(response.data.fileUrl);
         }
         else{
             throw new Error(response.data.message)
@@ -26,23 +24,27 @@ document.getElementById('showLeaderboard').onclick = async(e) =>{
         const token = localStorage.getItem('token');
         const response = await axios.get('http://localhost:8000/premium/showleaderboard', { headers: { 'Authorization': token } })
         renderLeaderboardData(response.data)
-
-        
     } catch (error) {
         console.error("Error While Loading  leaderboard Data", error);
     }
 }
 
+function downloadFile(url) {
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = 'my-expense.csv';
+    a.click();
+}
+
 function renderLeaderboardData(leaderboardData) {
     let divElement = document.createElement('div');
     let h1Element = document.createElement('h1');
-    divElement.classList.add('myform')
-    
+    h1Element.textContent = 'LeaderBoard';
     divElement.appendChild(h1Element)
+    divElement.classList.add('myform')
 
     leaderboardData.forEach( userData =>{
         let Element = document.createElement('li');
-        h1Element.textContent = 'LeaderBoard';
         Element.innerHTML = "Name: "+userData.name + "  --  "+ " Amount: " + userData.totalExpense ;
         Element.classList = 'list-group-item';
         leaderboard.classList.add("col-8")
@@ -50,6 +52,31 @@ function renderLeaderboardData(leaderboardData) {
         leaderboard.parentElement.appendChild(divElement)
     })
     divElement.appendChild(leaderboard);
+    divElement.classList.add("mt-3")
+
+}
+
+function renderUserFiles(data) {
+    let divElement = document.createElement('div');
+    let h1Element = document.createElement('h1');
+    h1Element.textContent = 'User Files';
+    divElement.appendChild(h1Element)
+    divElement.classList.add('myform')
+
+    data.forEach( userData =>{
+        let Element = document.createElement('li');
+        let downloadButton = document.createElement("button");
+        downloadButton.textContent = 'Download';
+        downloadButton.addEventListener("click", () => downloadFile(userData.fileurl));
+        downloadButton.classList = 'btn btn-secondary float-end';
+        Element.innerHTML = "Date: "+userData.createdAt ;
+        Element.classList = 'list-group-item';
+        Element.appendChild(downloadButton);
+        UserFiles.classList.add("col-10")
+        UserFiles.appendChild(Element);
+        UserFiles.parentElement.appendChild(divElement)
+    })
+    divElement.appendChild(UserFiles);
 
 }
 
@@ -135,6 +162,17 @@ async function getAllExpense() {
     }
 }
 
+async function getAllUserFiles() {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get('http://localhost:8000/users/get-files', { headers: { 'Authorization': token } });
+        console.log(response.data);
+        renderUserFiles(response.data.userfiles)
+    } catch (error) {
+        console.error(error);
+    }
+}
+
 function renderData(expenses) {
     list.innerHTML = '';
     expenses.forEach(expense => {
@@ -203,6 +241,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     try {
         showPremiumUser();
         await getAllExpense()
+        await getAllUserFiles()
     } catch (error) {
         console.error(JSON.stringify(error));
     }

@@ -1,6 +1,7 @@
 const UserServices = require('../Services/userservices')
 const S3Services = require('../Services/s3services')
 const Users = require('../models/users');
+const UserFiles = require('../models/userfiles');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
@@ -66,9 +67,24 @@ exports.downloadExpense = async (req, res) => {
         const stringifiedExpense = JSON.stringify(expenses)
         const filename = `Expense-${userId}-${new Date()}.txt`;
         const fileUrl = await S3Services.uploadToS3(stringifiedExpense, filename)
+        const userFiles = await req.user.createUserfile({fileurl:fileUrl})
         res.status(200).json({ fileUrl, success: true })
     } catch (err) {
         console.error(err);
+        return res.status(500).json({ fileUrl: '', success: false, err })
+    }
+}
+
+exports.getFiles = async (req,res) =>{
+    try {
+        const userfiles = await UserServices.getFiles(req)
+        if (userfiles) {
+            return res.status(200).json({userfiles})
+        } else {
+            throw new Error("User Doesnt have Any Files");
+        }
+        
+    } catch (error) {
         return res.status(500).json({ fileUrl: '', success: false, err })
     }
 }

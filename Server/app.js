@@ -11,6 +11,7 @@ app.use(cors());
 const Expense = require('./models/expense');
 const Users = require('./models/users');
 const Order = require('./models/order');
+const UserFiles = require('./models/userfiles');
 const Forgotpassword = require('./models/forgotpassword');
 
 Users.hasMany(Expense);
@@ -22,12 +23,17 @@ Order.belongsTo(Users);
 Users.hasMany(Forgotpassword);
 Forgotpassword.belongsTo(Users);
 
+Users.hasMany(UserFiles);
+UserFiles.belongsTo(Users);
+
 const usersRoutes = require('./routes/users');
 const expenseRoutes = require('./routes/expense');
 const purchaseRoutes = require('./routes/purchase');
 const premiumRoutes = require('./routes/premium');
 const passwordRoutes = require('./routes/password');
+
 app.use(bodyParser.json({ extended: false }))
+
 app.use('/users',usersRoutes);
 app.use('/expense',expenseRoutes);
 app.use('/purchase',purchaseRoutes);
