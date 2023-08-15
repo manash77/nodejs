@@ -15,7 +15,7 @@ const accessFileStream = fs.createWriteStream(path.join(__dirname,'access.log'),
 
 app.use(cors());
 app.use(Helmet());
-app.use(Morgan('combined',{stream:accessFileStream}));
+app.use(Morgan('combined',{stream: accessFileStream}));
 
 
 const Expense = require('./models/expense');
@@ -50,7 +50,7 @@ app.use('/purchase',purchaseRoutes);
 app.use('/premium',premiumRoutes);
 app.use('/password',passwordRoutes);
 
-
+console.log(process.env.PORT);
 
 sequelize
     .sync()

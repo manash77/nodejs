@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon app.js"
+    "start:dev": "nodemon app.js",
+    "start": "node app.js SECRET_KEY=secretKey101 RAZORPAY_KEY_ID=rzp_test_PGqQX3dfPrBq9V RAZORPAY_SECRET_KEY=1IwTEJgtcAhFo0G17zWrnJQp EMAIL_KEY=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 BUCKET_NAME=myexpensebucket IAM_USER_KEY=AKIA3FIBBVHEM7P47QQN IAM_USER_SECRET=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"
   },
   "keywords": [],
   "author": "",

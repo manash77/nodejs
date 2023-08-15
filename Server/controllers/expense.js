@@ -8,7 +8,6 @@ let ITEMS_PER_PAGE = 2;
 exports.getAllExpense = async (req, res, next) => {
   try {
     const page = +req.query.page || 1;
-    console.log(req.query);
     ITEMS_PER_PAGE = +req.query.numberofexpense;
 
     const expense = await req.user.getExpenses({
