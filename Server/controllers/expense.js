@@ -3,11 +3,13 @@ const Users = require('../models/users');
 const userContorller = require('./users');
 const sequelize = require('../util/database');
 
-const ITEMS_PER_PAGE = 2;
+let ITEMS_PER_PAGE = 2;
 
 exports.getAllExpense = async (req, res, next) => {
   try {
     const page = +req.query.page || 1;
+    console.log(req.query);
+    ITEMS_PER_PAGE = +req.query.numberofexpense;
 
     const expense = await req.user.getExpenses({
       offset: (page - 1) * ITEMS_PER_PAGE,
@@ -19,7 +21,7 @@ exports.getAllExpense = async (req, res, next) => {
       currentPage: page,
       hasNextPage: ITEMS_PER_PAGE * page < totalItems.length,
       nextPage: page+1,
-      hasPreviousPage: page >1,
+      hasPreviousPage: page > 1,
       previousPage: page-1,
       lastPage: Math.ceil(totalItems.length/ITEMS_PER_PAGE)
     })

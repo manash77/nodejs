@@ -6,7 +6,13 @@ const paginationElement = document.getElementById('pagination');
 const pageNumberElement = document.getElementById('pageNumbers');
 const prevButtonElement = document.getElementById('prevButton');
 const nextButtonElement = document.getElementById('nextButton');
+const numberOfExpenesesElement = document.getElementById('numberOfExpeneses');
 let currentPage;
+
+numberOfExpenesesElement.onchange = async (e) =>{
+    localStorage.setItem('numberofexpense',e.target.value);
+    getProducts(currentPage);
+}
 
 document.getElementById('downloadLeaderboard').onclick = async (e) => {
     try {
@@ -59,7 +65,7 @@ function renderLeaderboardData(leaderboardData) {
     })
     divElement.appendChild(leaderboard);
     divElement.style.maxWidth = '450px';
-    divElement.classList.add("mt-3")
+    divElement.classList.add("mt-1")
 }
 
 function renderUserFiles(data) {
@@ -248,8 +254,10 @@ document.getElementById('razorButton').onclick = async (e) => {
 window.addEventListener('DOMContentLoaded', async () => {
     try {
         const token = localStorage.getItem('token');
+        const numberofexpense = localStorage.getItem('numberofexpense');
         const { ispremiumuser } = parseJwt(token);
-        await getProducts(2)
+        numberOfExpenesesElement.value = numberofexpense;
+        await getProducts(1)
         showPremiumUser();
         if (ispremiumuser) {
             await getAllUserFiles()
@@ -273,7 +281,8 @@ function showPremiumUser() {
 async function getProducts(page){
     try {
         const token = localStorage.getItem('token');
-        const response = await axios.get(`http://localhost:8000/expense/get-expense?page=${page}`, { headers: { 'Authorization': token } });
+        const numberofexpense = localStorage.getItem('numberofexpense')
+        const response = await axios.get(`http://localhost:8000/expense/get-expense?page=${page}&numberofexpense=${numberofexpense}`, { headers: { 'Authorization': token } });
         if (response.status === 200) {
             const {data: { expense, ...pageData}} = response;
             renderData(expense);
@@ -286,10 +295,11 @@ async function getProducts(page){
 }
 
 function showPagination({ currentPage,hasNextPage,nextPage,hasPreviousPage,previousPage,lastPage}) {
+    this.currentPage = currentPage;
     console.log(currentPage,hasNextPage,nextPage,hasPreviousPage,previousPage,lastPage);
-
+    prevButtonElement.innerHTML = '';
+    nextButtonElement.innerHTML = '';
     if(hasPreviousPage){
-        prevButtonElement.innerHTML = '';
         const Btn = document.createElement('button')
         const span = document.createElement('span')
 
@@ -301,7 +311,6 @@ function showPagination({ currentPage,hasNextPage,nextPage,hasPreviousPage,previ
     }
 
     if(hasNextPage){
-        nextButtonElement.innerHTML = '';
         const Btn = document.createElement('button')
         const span = document.createElement('span')
 
@@ -314,7 +323,6 @@ function showPagination({ currentPage,hasNextPage,nextPage,hasPreviousPage,previ
 
     pageNumberElement.innerHTML=''
     for (let i = 1; i <= lastPage; i++) {
-        console.log(i);
         let li = document.createElement('li')
         let Btn = document.createElement('button')
         
