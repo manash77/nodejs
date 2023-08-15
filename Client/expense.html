@@ -12,69 +12,78 @@
 </head>
 
 <body>
-    <div><marquee behavior="slide" direction="right" id="message" class="fs-5 text"></marquee></div>
+    <div>
+        <marquee behavior="slide" direction="right" id="message" class="fs-5 text"></marquee>
+    </div>
 
     <div class="container-fluid">
         <div class="row">
-          <div class="col-4">
-              <ul id="userfiles" class="list-group"></ul>
-              <ul id="leaderboard" class="list-group"></ul>
-            <div class="row d-flex justify-content-center">
+            <div class="col-4">
+                <div class="row d-flex justify-content-center">
+                    <ul id="userfiles" class="list-group"></ul>
+                    <ul id="leaderboard" class="list-group"></ul>
+                </div>
             </div>
-          </div>
-          <div class="col-6">
-            <div class="myform needs-validation">
-                <div class="col-sm-10 col-md-11 col-lg-11 col-10">
-                    <div class="logo mb-3">
-                        <div class="text-center">
-                            <h1>Expense Tracker</h1>
-                        </div>
-                    </div>
-                    <div class="container py-5">
-                        <div class="row">
-                            <div class="col">
-                                <form id="Expense" onsubmit="onSubmit(event)">
-                                    <input type="hidden" name="id" id="expenseId">
-                                    <div class="form-group mb-3">
-                                        <label for="amount" class="form-label">Amount</label>
-                                        <input type="number" name="amount" id="amount" class="form-control">
-                                    </div>
-                                    <div class="form-group mb-3">
-                                        <label for="description" class="form-label">Description</label>
-                                        <input type="text" name="description" id="description" class="form-control">
-                                    </div>
-                                    <div class="form-group mb-3 col-auto" style="width: 95%;">
-                                        <label for="category" class="form-label">Category</label>
-                                        <select id="category" class="form-select">
-                                            <option>Fuel</option>
-                                            <option>Movie</option>
-                                            <option>Book</option>
-                                            <option>Shopping</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="row justify-content-center mt-3 mb-3 ">
-                                        <button id="add-edit-button" class="btn btn-secondary col-3"
-                                            type="submit">Add</button>
-                                        <button id="showLeaderboard" class="btn btn-secondary col-3 mx-2"
-                                            type="button">Dashboard</button>
-                                        <button id="downloadLeaderboard" class="btn btn-secondary col-3 mx-2"
-                                            type="button">Download</button>
-                                    </div>
-                                </form>
+            <div class="col-6">
+                <div class="myform needs-validation">
+                    <div class="col-sm-10 col-md-11 col-lg-11 col-10">
+                        <div class="logo mb-2">
+                            <div class="text-center">
+                                <h1>Expense Tracker</h1>
                             </div>
                         </div>
+                        <div class="container py-3">
+                            <div class="row">
+                                <div class="col">
+                                    <form id="Expense" onsubmit="onSubmit(event)">
+                                        <input type="hidden" name="id" id="expenseId">
+                                        <div class="form-group mb-3">
+                                            <label for="amount" class="form-label">Amount</label>
+                                            <input type="number" name="amount" id="amount" class="form-control">
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="description" class="form-label">Description</label>
+                                            <input type="text" name="description" id="description" class="form-control">
+                                        </div>
+                                        <div class="form-group mb-3 col-auto" style="width: 95%;">
+                                            <label for="category" class="form-label">Category</label>
+                                            <select id="category" class="form-select">
+                                                <option>Fuel</option>
+                                                <option>Movie</option>
+                                                <option>Book</option>
+                                                <option>Shopping</option>
+                                            </select>
+                                        </div>
 
-                        <div class="col-auto">
-                            <ul id="list" class="list-group"></ul>
+                                        <div class="row justify-content-center mt-3 mb-3 hstack gap-3">
+                                            <button id="add-edit-button" class="btn btn-secondary col-3"
+                                                type="submit">Add</button>
+                                            <button id="showLeaderboard" class="btn btn-secondary col-3"
+                                                type="button">Dashboard</button>
+                                            <button id="downloadLeaderboard" class="btn btn-secondary col-3"
+                                                type="button">Download</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <div class="col-auto">
+                                <ul id="list" class="list-group"></ul>
+                            </div>
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination justify-content-center mt-3" id="pagination">
+                                    <li class="page-item" id="prevButton"></li>
+                                    <div id="pageNumbers">
+                                    </div>
+                                    <li class="page-item" id="nextButton"></li>
+                                </ul>
+                            </nav>
                         </div>
-
                     </div>
                 </div>
             </div>
-          </div>
         </div>
-      </div>
+    </div>
     <div class="container mt-5">
         <div class="row d-flex justify-content-center">
             <div class="col">

@@ -3,12 +3,32 @@ const Users = require('../models/users');
 const userContorller = require('./users');
 const sequelize = require('../util/database');
 
-exports.getAllExpense = (req, res, next) => {
-  Expense.findAll({ where: { userId: req.user.id } })
-    .then(expenses => {
-      return res.json(expenses)
+const ITEMS_PER_PAGE = 2;
+
+exports.getAllExpense = async (req, res, next) => {
+  try {
+    const page = +req.query.page || 1;
+
+    const expense = await req.user.getExpenses({
+      offset: (page - 1) * ITEMS_PER_PAGE,
+      limit: ITEMS_PER_PAGE
     })
-    .catch(err => console.error(err))
+    const totalItems = await req.user.getExpenses()
+    return res.status(200).json({
+      expense,
+      currentPage: page,
+      hasNextPage: ITEMS_PER_PAGE * page < totalItems.length,
+      nextPage: page+1,
+      hasPreviousPage: page >1,
+      previousPage: page-1,
+      lastPage: Math.ceil(totalItems.length/ITEMS_PER_PAGE)
+    })
+
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ success: false, err })
+  }
+
 }
 exports.postAddExpense = async (req, res, next) => {
   const t = await sequelize.transaction();
@@ -49,8 +69,8 @@ exports.postDeleteExpense = async (req, res, next) => {
     const expense = await Expense.findByPk(id)
     if (expense) {
       const totalExpense = Number(req.user.totalExpense) - Number(expense.amount);
-      const promise1 = await req.user.update({ totalExpense },{transaction:t})
-      const promise2 = await expense.destroy({transaction:t});
+      const promise1 = await req.user.update({ totalExpense }, { transaction: t })
+      const promise2 = await expense.destroy({ transaction: t });
 
       Promise.all([promise1, promise2]).then(() => {
         t.commit()
