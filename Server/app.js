@@ -7,15 +7,18 @@ const sequelize = require('./util/database');
 const bodyParser = require('body-parser');
 const Helmet = require('helmet');
 const Morgan = require('morgan');
-require('dotenv').config();
+const dotenv = require('dotenv');
+
+dotenv.config();
 
 const app = express();
 
-const accessFileStream = fs.createWriteStream(path.join(__dirname,'access.log'),{flags:'a'})
 
 app.use(cors());
 app.use(Helmet());
-app.use(Morgan('combined',{stream: accessFileStream}));
+// const accessFileStream = fs.createWriteStream(path.join(__dirname,'access.log'),{flags:'a'})
+// app.use(Morgan('combined',{stream: accessFileStream}));
+app.use(Morgan('combined'));
 
 
 const Expense = require('./models/expense');
@@ -50,10 +53,9 @@ app.use('/purchase',purchaseRoutes);
 app.use('/premium',premiumRoutes);
 app.use('/password',passwordRoutes);
 
-console.log(process.env.PORT);
 
 sequelize
-    .sync()
+.sync()
     .then(res => {
         // console.log(res);
         app.listen(8000);
