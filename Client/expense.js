@@ -8,6 +8,7 @@ const prevButtonElement = document.getElementById('prevButton');
 const nextButtonElement = document.getElementById('nextButton');
 const numberOfExpenesesElement = document.getElementById('numberOfExpeneses');
 let currentPage;
+let created = true;
 
 numberOfExpenesesElement.onchange = async (e) =>{
     localStorage.setItem('numberofexpense',e.target.value);
@@ -35,6 +36,7 @@ document.getElementById('showLeaderboard').onclick = async (e) => {
         const token = localStorage.getItem('token');
         const response = await axios.get('http://localhost:8000/premium/showleaderboard', { headers: { 'Authorization': token } })
         renderLeaderboardData(response.data)
+
     } catch (error) {
         console.error("Error While Loading  leaderboard Data", error);
     }
@@ -48,29 +50,36 @@ function downloadFile(url) {
 }
 
 function renderLeaderboardData(leaderboardData) {
-    let divElement = document.createElement('div');
-    let h1Element = document.createElement('h1');
-    h1Element.textContent = 'LeaderBoard';
-    h1Element.classList.add('text-center')
-    divElement.appendChild(h1Element)
-    divElement.classList.add('myform')
-
-    leaderboardData.forEach(userData => {
-        let Element = document.createElement('li');
-        Element.innerHTML = "Name: " + userData.name + "  --  " + " Amount: " + userData.totalExpense;
-        Element.classList = 'list-group-item';
-        leaderboard.classList.add("col-12")
-        leaderboard.appendChild(Element);
-        leaderboard.parentElement.appendChild(divElement)
-    })
-    divElement.appendChild(leaderboard);
-    divElement.style.maxWidth = '450px';
-    divElement.classList.add("mt-1")
+    if (created) {
+        
+        const divElement = document.createElement('div');
+        const h1Element = document.createElement('h1');
+        leaderboard.innerHTML = ''
+        h1Element.textContent = 'LeaderBoard';
+        h1Element.classList.add('text-center')
+        divElement.appendChild(h1Element)
+        divElement.classList.add('myform')
+    
+        leaderboardData.forEach(userData => {
+            let Element = document.createElement('li');
+            Element.innerHTML = "Name: " + userData.name + "  --  " + " Amount: " + userData.totalExpense;
+            Element.classList = 'list-group-item';
+            leaderboard.classList.add("col-12")
+            leaderboard.appendChild(Element);
+            leaderboard.parentElement.appendChild(divElement)
+        })
+        divElement.appendChild(leaderboard);
+        divElement.style.maxWidth = '450px';
+        divElement.classList.add("mt-1")
+    }
+    created = false;
 }
 
 function renderUserFiles(data) {
+    UserFiles.innerHTML = '';
     let divElement = document.createElement('div');
     let h1Element = document.createElement('h1');
+    divElement.innerHTML=''
     h1Element.textContent = 'User Files';
     h1Element.classList.add('text-center')
     divElement.appendChild(h1Element)
@@ -131,7 +140,7 @@ async function addExpense(expense) {
                 alert(response.data.err);
             }
         } +
-            await getAllExpense()
+            await getProducts(currentPage)
     } catch (error) {
         console.error("Error While Saving Data", error);
     }
@@ -181,7 +190,11 @@ async function getAllUserFiles() {
         const token = localStorage.getItem('token');
         const response = await axios.get('http://localhost:8000/users/get-files', { headers: { 'Authorization': token } });
         console.log(response.data);
-        renderUserFiles(response.data.userfiles)
+        if (response.data.userfiles) {
+            renderUserFiles(response.data.userfiles)
+        }else{
+            UserFiles.innerHTML = 'No Data Available !!'
+        }
     } catch (error) {
         console.error(error);
     }
@@ -296,7 +309,6 @@ async function getProducts(page){
 
 function showPagination({ currentPage,hasNextPage,nextPage,hasPreviousPage,previousPage,lastPage}) {
     this.currentPage = currentPage;
-    console.log(currentPage,hasNextPage,nextPage,hasPreviousPage,previousPage,lastPage);
     prevButtonElement.innerHTML = '';
     nextButtonElement.innerHTML = '';
     if(hasPreviousPage){
